@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Inspect repo",
+			"type": "shell",
+			"command": "git --no-pager status --short --branch && echo --- && dir /b",
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}
