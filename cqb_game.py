@@ -1,14 +1,4 @@
-"""
-CQB Trainer v2 - "juiced" edition
----------------------------------
-Pygame front end for cqb_rules_engine.py with synthesized sound, dynamic
-flashlight lighting, particles, screen shake, themed rooms and a polished UI.
-All audio and art is generated in code (no asset files needed).
 
-Run:  python cqb_game.py
-Keys: Z slice | X call | 1-4 send A-D | arrows leave doorway | click select/engage
-      L reload | H rear hold | TAB cycle | F1 coach | F2 scanlines | M mute
-"""
 import array
 import math
 import random
