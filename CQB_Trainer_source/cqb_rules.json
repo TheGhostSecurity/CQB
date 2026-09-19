@@ -1,0 +1,122 @@
+[
+  {
+    "id": "R01",
+    "name": "Slice the pie",
+    "description": "Check the room from outside before entering.",
+    "trigger": "enter",
+    "check": "chk_sliced",
+    "reward": 10,
+    "penalty": 15,
+    "fatal": false
+  },
+  {
+    "id": "R02",
+    "name": "Stack order",
+    "description": "Operators enter in their assigned order.",
+    "trigger": "enter",
+    "check": "chk_stack_order",
+    "reward": 10,
+    "penalty": 15,
+    "fatal": false
+  },
+  {
+    "id": "R03",
+    "name": "Announce entry",
+    "description": "Call out when moving through a door.",
+    "trigger": "enter",
+    "check": "chk_call",
+    "reward": 5,
+    "penalty": 10,
+    "fatal": false
+  },
+  {
+    "id": "R04",
+    "name": "Ammo check",
+    "description": "Do not enter with a nearly empty weapon.",
+    "trigger": "enter",
+    "check": "chk_ammo",
+    "reward": 5,
+    "penalty": 10,
+    "fatal": false
+  },
+  {
+    "id": "R05",
+    "name": "Speed",
+    "description": "Enter within 4 seconds of the go signal.",
+    "trigger": "enter",
+    "check": "chk_speed",
+    "reward": 10,
+    "penalty": 5,
+    "fatal": false
+  },
+  {
+    "id": "R06",
+    "name": "Leave the fatal funnel",
+    "description": "Do not stall in the doorway.",
+    "trigger": "enter",
+    "check": "chk_no_funnel",
+    "reward": 10,
+    "penalty": 20,
+    "fatal": false
+  },
+  {
+    "id": "R07",
+    "name": "Sector discipline",
+    "description": "Cover only your sector until it is clear.",
+    "trigger": "engage",
+    "check": "chk_sector",
+    "reward": 10,
+    "penalty": 15,
+    "fatal": false
+  },
+  {
+    "id": "R08",
+    "name": "No flagging",
+    "description": "Never point your weapon at a teammate.",
+    "trigger": "engage",
+    "check": "chk_no_flag",
+    "reward": 5,
+    "penalty": 25,
+    "fatal": false
+  },
+  {
+    "id": "R09",
+    "name": "Threat priority",
+    "description": "Engage armed threats before unarmed ones.",
+    "trigger": "engage",
+    "check": "chk_priority",
+    "reward": 15,
+    "penalty": 20,
+    "fatal": false
+  },
+  {
+    "id": "R10",
+    "name": "Protect civilians",
+    "description": "Never fire on a civilian.",
+    "trigger": "engage",
+    "check": "chk_no_civilian",
+    "reward": 0,
+    "penalty": 100,
+    "fatal": true
+  },
+  {
+    "id": "R11",
+    "name": "Rear security",
+    "description": "The last operator watches behind the team.",
+    "trigger": "hold",
+    "check": "chk_rear",
+    "reward": 10,
+    "penalty": 20,
+    "fatal": false
+  },
+  {
+    "id": "R12",
+    "name": "Call your reload",
+    "description": "Announce a reload so the team can cover you.",
+    "trigger": "reload",
+    "check": "chk_call",
+    "reward": 5,
+    "penalty": 10,
+    "fatal": false
+  }
+]
