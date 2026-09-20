@@ -8,6 +8,7 @@ from dataclasses import dataclass
 import pygame
 from pygame.math import Vector2 as V2
 
+from controls import Pad
 from cqb_rules_engine import Engine, Action, Operator, Room, generate_rules
 
 # ================================================================== constants
@@ -255,8 +256,6 @@ class Sfx:
         if self.muted:
             pygame.mixer.stop() if self.ok else None
             self.drone_ch = None
-            if self.ok:
-                self.drone_on_pending = True
 
 
 # ============================================================== procedural art
@@ -475,9 +474,11 @@ def angle_diff(a, b):
 # ==================================================================== the game
 class Game:
     def __init__(self):
+        pygame.quit()
         pygame.init()
         self.sfx = Sfx()
         pygame.display.set_caption("CQB Trainer - Rules Engine Edition")
+        pygame.display.quit()
         self.screen = pygame.display.set_mode((W, H), pygame.SCALED | pygame.RESIZABLE)
         self.surf = self.screen
         self.clock = pygame.time.Clock()
@@ -500,6 +501,9 @@ class Game:
         self.dark_a, self.door_open, self.slice_t = 236.0, 0.0, 0.0
         self.last_mult, self.last_sec = 1, 99
         self.cone_cache = {}
+        self.pad = Pad()
+        self.pad_st = {}
+        self.go_solo = False
         self.build_assets()
         self.start_stub()
 
@@ -818,6 +822,10 @@ class Game:
             elif k in (pygame.K_RETURN, pygame.K_SPACE):
                 self.sfx.play("radio")
                 self.start_run()
+            elif k == pygame.K_s:
+                self.go_solo = True
+                self.running = False
+                self.sfx.play("radio")
             elif k == pygame.K_ESCAPE:
                 self.running = False
         elif self.state == "debrief":
@@ -871,6 +879,40 @@ class Game:
             if self.threat_state(t) != "hidden" and V2(t["pos"]).distance_to(p) <= 22:
                 self.engage(t)
                 return
+
+    # --------------------------------------------------------- gamepad (team)
+    def poll_pad(self):
+        if not self.pad.present or self.state != "play":
+            return
+        p, st = self.pad, self.pad_st
+        if p.btn_tap("LB", st):
+            self.do_slice()
+        if p.btn_tap("X", st):
+            self.do_call()
+        if p.btn_tap("A", st):
+            for i, n in enumerate(self.team):
+                if self.rt[n].status == "corridor":
+                    self.send(i)
+                    break
+        if p.btn_tap("Y", st):
+            if self.rt["D"].status == "inside":
+                self.selected = "D"
+                self.do_hold()
+        if p.btn_tap("B", st):
+            if self.selected:
+                self.do_reload()
+        hat = self.pad.hat()
+        if hat is not None:
+            dx, dy = hat
+            self.last_hat = dx
+            if dx == -1:
+                self.leave_door("left")
+            elif dx == 1:
+                self.leave_door("right")
+            elif dy == 1:
+                self.leave_door("center")
+        if p.btn_tap("START", st):
+            self.handle_event(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_ESCAPE, mod=0))
 
     # --------------------------------------------------------------- update
     def update(self, dt):
@@ -1495,18 +1537,26 @@ class Game:
         for i, line in enumerate(howto):
             self.text(self.f16, line, (600, 190 + i * 24), CYAN if i == 0 else WHITE)
         if int(self.tt * 2) % 2 == 0:
-            self.text_o(self.f22, "ENTER - start     ESC - quit", (W // 2, 620), GREEN, True)
-        self.text(self.f13, "M mute   F2 scanlines", (W // 2, 680), DIM, True)
+            self.text_o(self.f22, "ENTER - start     S - SOLO FPS     ESC - quit", (W // 2, 620), GREEN, True)
+        self.text(self.f13, "M mute   F2 scanlines   F1 coach   ISO controls: WASD+mouse / gamepad", (W // 2, 680), DIM, True)
 
 
 def main():
-    g = Game()
-    while g.running:
-        dt = min(g.clock.tick(FPS) / 1000, 0.05)
-        for e in pygame.event.get():
-            g.handle_event(e)
-        g.update(dt)
-        g.draw()
+    while True:
+        g = Game()
+        while g.running:
+            dt = min(g.clock.tick(FPS) / 1000, 0.05)
+            for e in pygame.event.get():
+                g.handle_event(e)
+            g.poll_pad()
+            g.update(dt)
+            g.draw()
+        if g.go_solo:
+            from solo import SoloGame
+            s = SoloGame(g.diff)
+            s.run()
+            continue
+        break
     pygame.quit()
 
 

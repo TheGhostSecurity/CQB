@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual env / build artifacts
+.venv/
+build/
+dist/
+*.spec
+
+# Test cache
+.pytest_cache/
