@@ -16,7 +16,7 @@ python -m pip install --upgrade pip || goto fail
 python -m pip install -r requirements.txt || goto fail
 
 echo Building CQB_Trainer.exe ...
-pyinstaller --noconfirm --clean --onefile --windowed --name CQB_Trainer cqb_game.py || goto fail
+pyinstaller --noconfirm --clean --onefile --windowed --name CQB_Trainer solo.py || goto fail
 
 echo.
 echo ================================================

@@ -93,6 +93,30 @@ class SoloGame:
         self.yaw, self.pitch = 0.0, 0.0
         self.build_world()
         self.state = "play"
+        # Brighten the film so a fresh boot is actually lookable: the factory
+        # scanlines/vignette were (almost) pitch black. Keep just enough mood
+        # to read the camera as a night-vision FPS, not a void.
+        self.vig.set_alpha(60)
+        self.scan.set_alpha(52)
+        self.vig = pygame.transform.smoothscale(self.vig, (W, H))
+
+        # ---------- visibility: soften the mood overlays so headless users can
+        # actually see targets. The old factory settings erased almost all light.
+        self.vig.set_alpha(92)
+        self.scan.set_alpha(86)
+
+        # ---------- visibility: brighten the world so a fresh boot is actually
+        # lookable. The factory premade stayed at "pitch black until you slice";
+        # headless + real users both complained it was invisible. Keep the mood
+        # but guarantee every surface reads over (6,8,14).
+        self.world.fill((24, 34, 46))
+        self.ambient_hint = (0.55, 0.75, 0.6) if self.room.sliced else (0.42, 0.6, 0.5)
+        self.scan.set_alpha(58)
+        self.vig.set_alpha(74)
+
+    def main(self):
+        """Boot straight into the solo FPS (this is what the bundled exe runs).
+        One call, no hub, no menu dance - WASD + mouse."""
 
     def build_world(self):
         rng = random.Random(self.level * 101 + random.randint(0, 999))
@@ -431,9 +455,9 @@ class SoloGame:
 
     def draw_world(self):
         w = self.world
-        w.fill((6, 8, 14))
+        w.fill((30, 42, 54))
         cam = self.cam()
-        light = (0.5, 0.7, 0.5) if self.room.sliced else (0.18, 0.26, 0.26)
+        light = (0.62, 0.85, 0.62) if self.room.sliced else (0.5, 0.72, 0.5)
         faces = list(self.faces)
         for d in self.down:
             faces.append((((d["pos3"][0] - 0.4, 0.0, d["pos3"][2] - 0.5),
@@ -707,3 +731,28 @@ def seg_aabb(a, b, box):
             if tmin > tmax:
                 return False
     return True
+
+
+def main():
+    """Boot the SOLO FPS immediately - that's it, no hub, no team menu dance.
+    WASD + mouse (or a pad): slice (Z), call (C), step through the door."""
+    g = SoloGame("normal")
+    try:
+        g.run()
+    finally:
+        pygame.quit()
+
+
+if __name__ == "__main__":
+    main()
+
+
+def main():
+    """Boot the solo FPS directly (what the bundled exe should run): start the
+    SoloGame loop, no hub/menu dance, WASD + mouse."""
+    s = SoloGame("normal")
+    s.run()
+
+
+if __name__ == "__main__":
+    main()
